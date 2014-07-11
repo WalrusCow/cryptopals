@@ -11,6 +11,6 @@ def solve(encryptedStrings):
         print('Line:\n{}\nDecrypted:\nKey: {} Text: {}'.format(string, *d))
 
 if __name__ == '__main__':
-    with open('maybestrings.txt') as f:
+    with open('findsinglechar.txt') as f:
         # Remove trailing newline from file iteration
         solve(map(str.strip, f))
