@@ -8,6 +8,7 @@ def xorBytes(b1, b2):
     n2 = int.from_bytes(b2, 'little')
     return (n1 ^ n2).to_bytes(max(len(b1), len(b2)), 'little')
 
+
 # Yay for inputs
 s1 = bytes.fromhex('1c0111001f010100061a024b53535009181c')
 s2 = bytes.fromhex('686974207468652062756c6c277320657965')
