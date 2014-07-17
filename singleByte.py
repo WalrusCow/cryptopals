@@ -13,11 +13,19 @@ def xor(byteArray, i):
 def decrypt(byteArray):
     ''' Decrypt a single byte xor cipher. '''
 
+    minD = float('inf')
+    best = (-1, b'')
+
     # Iterate over all possible byte values
     for i in range(0, 256):
         decrypt = bytes(xor(byteArray, i))
         if English.probable(decrypt):
-            return chr(i), decrypt
+            return i, decrypt
+        else:
+            d = English.distance(decrypt)
+            if d < minD:
+                best = (i, decrypt)
+                minD = d
 
     # No valid one found. Here we can get the max if we wanted
     return None

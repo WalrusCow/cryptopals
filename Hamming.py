@@ -4,6 +4,7 @@ def weight(byte):
     while byte:
         w += 1
         byte &= byte - 1
+    return w
 
 def distance(b1, b2):
     ''' Compute the Hamming distance between the two byte arrays. '''

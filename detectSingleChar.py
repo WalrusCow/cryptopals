@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
-import singleChar
+import singleByte
 
 def solve(encryptedStrings):
     ''' Find the string that has been encrypted with a single character
     XOR cipher in the iterable of strings. Input is hex encoded. '''
     for string in encryptedStrings:
-        d = singleChar.decrypt(bytes.fromhex(string))
+        d = singleByte.decrypt(bytes.fromhex(string))
         if not d: continue
         print('Line:\n{}\nDecrypted:\nKey: {} Text: {}'.format(string, *d))
 
