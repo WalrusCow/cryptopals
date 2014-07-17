@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 def _blockIter(lst, blockSize):
     ''' Iterate over list in chunk of size blockSize. '''
     start = 0
@@ -16,19 +17,15 @@ def isECB(byteArray):
     return len(s) != (len(byteArray) / 16)
 
 
-
-
-
-
 def findECB(byteArrays):
     ''' Find the ECB hex in an array of bytes. '''
     for i, arr in enumerate(byteArrays):
         if isECB(arr):
-            print('Found ECB at {}'.format(i))
+            print('Found ECB at line {}'.format(i + 1))
 
 
 if __name__ == '__main__':
-    with open('ecb_detect.txt') as f:
+    with open('texts/ecb_detect.txt') as f:
         # Create a list of bytes from the lines of the file
         # Each line is hex encoded, and will end with a newline so we strip
         hexes = list(map(bytes.fromhex, map(str.strip, f)))

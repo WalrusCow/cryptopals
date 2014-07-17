@@ -1,0 +1,56 @@
+1. Convert hex to base64 and back.
+
+Built in to Python (though I have written my own for fun).
+b64.py for "proof"
+
+// ------------------------------------------------------------
+
+2. Fixed XOR
+
+See xor.py
+
+// ------------------------------------------------------------
+
+3. Single-character XOR Cipher
+
+See singleByte.py and English.py.  The max distance probably needs to be
+adjusted for the specific example you've chosen (I edited it for later
+problems).
+
+Key: 'X'
+Text: "Cooking MC's like a pound of bacon"
+
+// ------------------------------------------------------------
+
+4. Detect single-character XOR
+
+Key: '5'
+Text: 'Now that the party is jumping\n' (from Ice Ice Baby by Vanilla Ice)
+
+See detectSingleChar.py
+
+// ------------------------------------------------------------
+
+5. Repeating-key XOR Cipher
+
+Yep see repeatingKey.py
+
+// ------------------------------------------------------------
+
+6. Break repeating-key XOR
+
+Key is 'Terminator X: Bring the noise'.
+Text is lyrics to Play That Funky Music by Vanilla Ice.
+
+// ------------------------------------------------------------
+
+7. AES in ECB Mode
+
+Text is lyrics to Play That Funky Music by Vanilla Ice again.
+
+// ------------------------------------------------------------
+
+8. Detecting ECB
+
+Line 133. See detectECB.py
+I'm not 100% confident of this answer because it is a very simple idea I have.

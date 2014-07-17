@@ -12,6 +12,6 @@ def solve(encryptedStrings):
 
 
 if __name__ == '__main__':
-    with open('findsinglechar.txt') as f:
+    with open('texts/findsinglechar.txt') as f:
         # Remove trailing newline from file iteration
         solve(map(str.strip, f))

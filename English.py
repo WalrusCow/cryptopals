@@ -15,16 +15,15 @@ def _countChars(byteArray):
     def isWhitespace(byte):
         return any(byte == ord(c) for c in '\n\r\t ')
 
-    def gen():
-        for b in byteArray:
-            if ord('A') <= b <= ord('Z'):
-                yield chr(lowercase(b))
-            elif isWhitespace(b):
-                yield ' '
-            else:
-                yield chr(b)
+    def getChar(byte):
+        if ord('A') <= byte <= ord('Z'):
+            return chr(lowercase(byte))
+        elif isWhitespace(byte):
+            return ' '
+        else:
+            return chr(byte)
 
-    return Counter(gen())
+    return Counter(getChar(b) for b in byteArray)
 
 
 def _printable(b):

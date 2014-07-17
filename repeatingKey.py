@@ -69,7 +69,7 @@ def xor(byteArray, keyGen):
 
 
 if __name__ == '__main__':
-    with open('repeatingkey.txt', 'rb') as f:
+    with open('texts/repeatingkey.txt', 'rb') as f:
         byteArray = base64.b64decode(f.read())
         ans = decrypt(byteArray)
         if ans is None:
