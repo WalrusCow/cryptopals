@@ -1,11 +1,5 @@
 #!/usr/bin/python3
-def _blockIter(lst, blockSize):
-    ''' Iterate over list in chunk of size blockSize. '''
-    start = 0
-    while start < len(lst):
-        yield lst[start:start + blockSize]
-        start += blockSize
-
+import cryptUtil
 
 def isECB(byteArray):
     ''' Try to determine if an array of bytes is ECB encoded. '''
@@ -13,7 +7,7 @@ def isECB(byteArray):
     # What if we look for multiple 16 byte objects
 
     # Iterate over 16 byte blocks
-    s = frozenset(_blockIter(byteArray, 16))
+    s = frozenset(cryptUtil.blockIter(byteArray, 16))
     return len(s) != (len(byteArray) / 16)
 
 

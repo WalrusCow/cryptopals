@@ -9,21 +9,13 @@ from math import sqrt
 from _EnglishFrequency import *
 
 def _countChars(byteArray):
-    def lowercase(byte):
-        return byte + ord('a') - ord('A')
-
     def isWhitespace(byte):
         return any(byte == ord(c) for c in '\n\r\t ')
 
     def getChar(byte):
-        if ord('A') <= byte <= ord('Z'):
-            return chr(lowercase(byte))
-        elif isWhitespace(byte):
-            return ' '
-        else:
-            return chr(byte)
+        return ' ' if isWhitespace(byte) else chr(byte)
 
-    return Counter(getChar(b) for b in byteArray)
+    return Counter(getChar(b) for b in byteArray.lower())
 
 
 def _printable(b):
@@ -59,4 +51,12 @@ def probable(byteArray, *, maxDistance=0.18):
         return False
 
     freq = _charFreq(byteArray)
+
+    # Some very unlikely characters
+    unlikely = ''.join(k for k, v in charFrequency.items() if v < 0.0001)
+    s = sum(freq[ch] for ch in unlikely)
+    # If we are any greater than quit
+    if s > 1.5 * sum(charFrequency[ch] for ch in unlikely):
+        return False
+
     return distance(freq) < maxDistance
