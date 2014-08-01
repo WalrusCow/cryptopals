@@ -12,9 +12,6 @@ def _iterBytes():
     yield from range(0, 32)
     yield from range(128, 256)
 
-def _getNthBlock(text, blockSize, n):
-    return text[blockSize * n : blockSize * (n+1)]
-
 class SekritCipher:
     def __init__(self):
         self._cipher = aes.ecb(cryptUtil.randomBytes(16))
@@ -42,8 +39,8 @@ def findBlockSize(encrypt):
 def findMethod(encrypt, blockSize):
     ''' Determine if text was encrypted CBC or ECB. '''
     text = encrypt(b'x' * (blockSize * 3))
-    b1 = _getNthBlock(text, blockSize, 0)
-    b2 = _getNthBlock(text, blockSize, 1)
+    b1 = cryptUtil.getNthBlock(text, blockSize, 0)
+    b2 = cryptUtil.getNthBlock(text, blockSize, 1)
     return 'ECB' if b1 == b2 else 'CBC'
 
 def findNextByte(encrypt, blockSize, known):
@@ -55,14 +52,16 @@ def findNextByte(encrypt, blockSize, known):
     prefix = bytes(prefixLen)
 
     # This is the encrypted block containing the unknown byte as the last byte
-    short = _getNthBlock(encrypt(prefix), blockSize, blockNum)
+    short = cryptUtil.getNthBlock(encrypt(prefix), blockSize, blockNum)
 
     # From now on we want to use the prefix, known and random byte
     # to push our guessed byte to the end of a block
     prefix += known
     for b in _iterBytes():
         byte = bytes([b])
-        if short == _getNthBlock(encrypt(prefix + byte), blockSize, blockNum):
+        if short == cryptUtil.getNthBlock(encrypt(prefix + byte),
+                                          blockSize,
+                                          blockNum):
             return byte
 
 def findSecret(cipher):

@@ -26,6 +26,8 @@ See byteECB.py
 
 13. ECB cut-and-paste
 
+See kvp.py
+
 Write a k=v parsing routine, as if for a structured cookie. The
 routine should take:
 

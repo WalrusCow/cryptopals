@@ -9,3 +9,7 @@ def blockIter(lst, blockSize):
 
 def randomBytes(n):
     return bytes(randint(0, 255) for _ in range(n))
+
+def getNthBlock(text, blockSize, n):
+    return text[blockSize * n : blockSize * (n+1)]
+

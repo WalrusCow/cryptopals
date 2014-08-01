@@ -6,6 +6,7 @@ def pad(byteArray, blockSize):
     return byteArray + bytes(pad for _ in range(pad))
 
 def getPadding(byteArray, blockSize=16):
+    if not byteArray: return 0
     b = byteArray[-1]
     if b >= blockSize: return 0
     l = len(byteArray)
