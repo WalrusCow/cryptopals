@@ -1,11 +1,9 @@
 import base64
 from random import randint
 
-import pkcs
 import aes
-
-def _randomBytes(n):
-    return bytes(randint(0, 255) for _ in range(n))
+import cryptUtil
+import pkcs
 
 def _iterBytes():
     ''' An interator for the possible values of a byte, in a smart order. '''
@@ -17,9 +15,9 @@ def _iterBytes():
 def _getNthBlock(text, blockSize, n):
     return text[blockSize * n : blockSize * (n+1)]
 
-class Encryptor:
+class SekritCipher:
     def __init__(self):
-        self.cipher = aes.ecb(_randomBytes(16))
+        self._cipher = aes.ecb(cryptUtil.randomBytes(16))
 
     def encrypt(self, text):
         sekrit = ('Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkg'
@@ -28,7 +26,7 @@ class Encryptor:
                   'YnkK')
         text += base64.b64decode(sekrit.encode())
         text = pkcs.pad(text, 16)
-        return self.cipher.encrypt(text)
+        return self._cipher.encrypt(text)
 
 def findBlockSize(encrypt):
     ''' Find block size used in `encrypt`. '''
@@ -67,16 +65,16 @@ def findNextByte(encrypt, blockSize, known):
         if short == _getNthBlock(encrypt(prefix + byte), blockSize, blockNum):
             return byte
 
-def findSecret(encrypt):
+def findSecret(cipher):
     ''' Find the secret message hidden by encrypt. '''
-    blockSize, unknownLength = findBlockSize(encrypt)
-    if findMethod(encrypt, blockSize) != 'ECB':
+    blockSize, unknownLength = findBlockSize(cipher.encrypt)
+    if findMethod(cipher.encrypt, blockSize) != 'ECB':
         return
     known = b''
     for knownLength in range(unknownLength - 1):
         # Prefix to find next byte with
-        known += findNextByte(encrypt, blockSize, known)
+        known += findNextByte(cipher.encrypt, blockSize, known)
     return known
 
 if __name__ == '__main__':
-    print(findSecret(Encryptor().encrypt))
+    print(findSecret(SekritCipher()))

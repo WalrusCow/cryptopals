@@ -1,3 +1,5 @@
+from random import randint
+
 def blockIter(lst, blockSize):
     ''' Iterate over list in chunk of size blockSize. '''
     start = 0
@@ -5,3 +7,5 @@ def blockIter(lst, blockSize):
         yield lst[start:start + blockSize]
         start += blockSize
 
+def randomBytes(n):
+    return bytes(randint(0, 255) for _ in range(n))
