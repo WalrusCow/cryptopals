@@ -57,11 +57,11 @@ class cbc:
 if __name__ == '__main__':
     key = b'YELLOW SUBMARINE'
     #ecbCipher = ecb(key)
-    cbcCipher = cbc(key, bytes(16))
     #with open('texts/ecb.txt') as f:
     #    text = ''.join(f.read().strip()).encode()
     #    text = base64.b64decode(text)
-    #     print(ecbCipher.decrypt(text))
+    #    print(ecbCipher.decrypt(text))
+    cbcCipher = cbc(key, bytes(16))
     with open('texts/cbc_decrypt.txt') as f:
         text = ''.join(f.read().strip()).encode()
         text = base64.b64decode(text)
