@@ -11,5 +11,9 @@ def randomBytes(n):
     return bytes(randint(0, 255) for _ in range(n))
 
 def getNthBlock(text, blockSize, n):
+    ''' Zero indexed. '''
     return text[blockSize * n : blockSize * (n+1)]
 
+def hexify(b):
+    ''' Print bytes as hex, colon separated. '''
+    return ":".join("{:02x}".format(byte) for byte in b)
