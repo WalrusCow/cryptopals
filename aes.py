@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import base64
 
 from Crypto.Cipher import AES

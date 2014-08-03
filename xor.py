@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import base64
 
 def xorBytes(b1, b2):
