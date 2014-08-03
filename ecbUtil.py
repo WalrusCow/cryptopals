@@ -1,19 +1,6 @@
 import aes
 import pkcs
-from cryptUtil import blockIter, getNthBlock
-
-def blockSize(encrypt):
-    ''' Take in an encryption function and return the block size. '''
-    text = b'\x00'
-    l = len(encrypt(text))
-    # Say max block size is 128 (arbitrarily chosen)
-    for _ in range(128):
-        text += b'\x00'
-        n = len(encrypt(text))
-        if n != l:
-            return n - l
-    # No block size found
-    return None
+from cryptUtil import blockIter, getNthBlock, blockSize
 
 def method(encrypt, blockSize):
     ''' Determine if text was encrypted CBC or ECB. '''

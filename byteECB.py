@@ -3,7 +3,7 @@ import base64
 import aes
 import cryptUtil
 import pkcs
-import aesUtil
+import ecbUtil
 
 class SekritCipher:
     def __init__(self):
@@ -20,11 +20,11 @@ class SekritCipher:
 
 def findSecret(cipher):
     ''' Find the secret message hidden by encrypt. '''
-    blockSize = aesUtil.blockSize(cipher.encrypt)
-    if aesUtil.method(cipher.encrypt, blockSize) != 'ECB':
+    blockSize = cryptUtil.blockSize(cipher.encrypt)
+    if ecbUtil.method(cipher.encrypt, blockSize) != 'ECB':
         return
-    prefixLength = aesUtil.prefixLength(cipher.encrypt, blockSize)
-    return aesUtil.suffix(cipher.encrypt, blockSize, prefixLength)
+    prefixLength = ecbUtil.prefixLength(cipher.encrypt, blockSize)
+    return ecbUtil.suffix(cipher.encrypt, blockSize, prefixLength)
 
 if __name__ == '__main__':
     print(findSecret(SekritCipher()))

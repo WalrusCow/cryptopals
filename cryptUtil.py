@@ -1,5 +1,18 @@
 from random import randint
 
+def blockSize(encrypt):
+    ''' Take in an encryption function and return the block size. '''
+    text = b'\x00'
+    l = len(encrypt(text))
+    # Say max block size is 128 (arbitrarily chosen)
+    for _ in range(128):
+        text += b'\x00'
+        n = len(encrypt(text))
+        if n != l:
+            return n - l
+    # No block size found
+    return None
+
 def blockIter(lst, blockSize):
     ''' Iterate over list in chunk of size blockSize. '''
     start = 0

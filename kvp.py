@@ -4,7 +4,7 @@ import urllib.parse
 import aes
 import cryptUtil
 import pkcs
-import aesUtil
+import ecbUtil
 
 def encode(kvpList):
     # Do dumb quoting because proper urllib encoding will screw up due to
@@ -55,9 +55,9 @@ Idea:
 def makeAdmin(cipher):
     # Shorthand
     encrypt = cipher.encrypt
-    blockSize = aesUtil.blockSize(encrypt)
+    blockSize = cryptUtil.blockSize(encrypt)
 
-    prefixLen = aesUtil.prefixLength(encrypt, blockSize)
+    prefixLen = ecbUtil.prefixLength(encrypt, blockSize)
     adminPad = blockSize - (prefixLen % blockSize)
 
     rolePad = adminPad + (blockSize - len('&uid=10&role='))
