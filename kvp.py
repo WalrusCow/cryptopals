@@ -4,16 +4,16 @@ import urllib.parse
 import aes
 import cryptUtil
 import pkcs
-import byteECB
+import aesUtil
 
 def encode(kvpList):
     # Do dumb quoting because proper urllib encoding will screw up due to
     # "admin" being padded with \x0b which is encoded differently and thus
     # not pkcs stripped properly
-    quote = lambda x: x.replace('&', '%26').replace('=', '%3D')
-    s = '&'.join(quote(k) + '=' + quote(v) for k, v in kvpList)
-    # bytes forever
-    return s.encode()
+    def byteify(x): return x.encode() if type(x) == str else x
+    kvpList = ((byteify(k), byteify(v)) for k, v in kvpList)
+    quote = lambda x: x.replace(b'&', b'%26').replace(b'=', b'%3D')
+    return b'&'.join(quote(k) + b'=' + quote(v) for k, v in kvpList)
 
 def decode(qs):
     if type(qs) == bytes: qs = qs.decode()
@@ -25,10 +25,10 @@ class ProfileCipher():
         self._cipher = aes.ecb(cryptUtil.randomBytes(16))
 
     def _profile_for(self, email):
-        if type(email) == bytes: email = email.decode()
         return encode([('email', email), ('uid', '10'), ('role', 'user')])
 
     def encrypt(self, email):
+        if type(email) == str: email = email.encode()
         text = pkcs.pad(self._profile_for(email), 16)
         return self._cipher.encrypt(text)
 
@@ -42,7 +42,7 @@ Assumptions:
     (3) uid constant
 Idea:
     Use email to create a block that is XXXXuid=10&role=  This is block 1.
-    Find kind of padding used.
+    Find kind of padding used (we assume pkcs7).
         - Use email of "XXXXXXX" as length requires
     Use email to create a block that is adminPPPPPPPPPPP where `P` are the
     bytes that the encryptor uses. This is block 2.
@@ -53,37 +53,27 @@ Idea:
 '''
 
 def makeAdmin(cipher):
-    blockSize, _ = byteECB.findBlockSize(cipher.encrypt)
+    # Shorthand
+    encrypt = cipher.encrypt
+    blockSize = aesUtil.blockSize(encrypt)
 
-    # TODO: Determine programmatically where in the data our string
-    # is inserted, and then find the length of the prefix of it.
-    adminPad = blockSize - len(b'email=')
+    prefixLen = aesUtil.prefixLength(encrypt, blockSize)
+    adminPad = blockSize - (prefixLen % blockSize)
 
-    # TODO: Programmatically, strip the prefix foud from ^ and determine the
-    # secret text like in byteECB.  Then find where "role=user" is located
-    # and get this proper pad
-    rolePad =  adminPad + (blockSize - len('&uid=10&role='))
-    text = cipher.encrypt(b'x' * rolePad)
+    rolePad = adminPad + (blockSize - len('&uid=10&role='))
+    text = encrypt(b'x' * rolePad)
 
-    # TODO: Find this block number programmatically
     roleBlock = cryptUtil.getNthBlock(text, blockSize, 1)
 
-    # TODO: Detect PKCS #7 padding (or other padding kind)
-    # We will assuming pkcs #7 padding, but we can easily find out
-    # if this is the case, and adjust our padding appropriately
-    text = cipher.encrypt(b'x' * adminPad + pkcs.pad(b'admin', blockSize))
+    text = encrypt(b'x' * adminPad + pkcs.pad(b'admin', blockSize))
     adminBlock = cryptUtil.getNthBlock(text, blockSize, 1)
 
-    text = cipher.encrypt('x' * rolePad)
+    text = encrypt(b'x' * rolePad)
     myText =  cryptUtil.getNthBlock(text, blockSize, 0) + roleBlock + adminBlock
     try:
-        if cipher.decrypt(myText)['role'] == 'admin':
-            return True
+        return cipher.decrypt(myText)['role'] == 'admin':
     except:
-        pass
-    return False
+        return False
 
 if __name__ == '__main__':
     print('Success' if makeAdmin(ProfileCipher()) else 'Failure')
-    #print(encode({'email': 'fo@b.com&x=y', 'uid': 10, 'role': 'user'}))
-    #print(decode('foo=bar&baz=qux&zap=zazzle'))
