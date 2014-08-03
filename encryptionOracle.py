@@ -1,7 +1,3 @@
-'''
-Problem 10
-'''
-
 from random import randint
 
 import aes
@@ -31,12 +27,13 @@ def encryptionOracle(text):
 
 def getMethod(text):
     ''' Determine if text was encrypted CBC or ECB. '''
+    # Check two blocks that we know are our input for equality
     b2 = text[16:32]
     b3 = text[32:48]
     return 'ECB' if b2 == b3 else 'CBC'
 
 if __name__ == '__main__':
     text = b'x' * (16 * 3)
-    for _ in range(30):
+    for _ in range(5):
         cipherText, method = encryptionOracle(text)
-        print(getMethod(cipherText) == method)
+        print('Success' if getMethod(cipherText) == method else 'Failure')

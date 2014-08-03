@@ -22,7 +22,7 @@ class Quoter():
 
     @staticmethod
     def parse(text):
-        pairs = (pair.split(b'=', 1) for pair in text.split(b';') if b'=' in pair)
+        pairs = (p.split(b'=', 1) for p in text.split(b';') if b'=' in p)
         return [(Quoter.unquote(k), Quoter.unquote(v)) for k, v in pairs]
 
 class Encryptor():
@@ -46,13 +46,12 @@ def makeAdmin(encrypt):
         return bytes(x ^ y for x, y in zip(b1, b2))
 
     bs = blockSize(encrypt)
-    # it's cool that the prefix is known to be 32 bytes == 2 blocks lol
-    # otherwise we'd have to get the prefix length which might be ugly
+    # it's cool that the prefix is known to be 32 bytes == 2 blocks
+    # otherwise we'd have to get the prefix length somehow lol
     data = b'x'
     original = encrypt(data * 2 * bs)
     oldBlock = getNthBlock(original, bs, 2)
-    # This is one block long ^_^
-    payload = b';role=admin;foo='
+    payload = b';role=admin;x='
 
     # Flip every bit in the original block where payload and data differ
     newBlock = xor(oldBlock, xor(payload, data * len(payload)))

@@ -1,4 +1,3 @@
-import random
 import urllib.parse
 
 import aes
@@ -35,23 +34,6 @@ class ProfileCipher():
     def decrypt(self, text):
         return decode(pkcs.strip(self._cipher.decrypt(text)))
 
-'''
-Assumptions:
-    (1) Consistent ordering of KVP
-    (2) Email is first
-    (3) uid constant
-Idea:
-    Use email to create a block that is XXXXuid=10&role=  This is block 1.
-    Find kind of padding used (we assume pkcs7).
-        - Use email of "XXXXXXX" as length requires
-    Use email to create a block that is adminPPPPPPPPPPP where `P` are the
-    bytes that the encryptor uses. This is block 2.
-        - Use email "adminPPPPPPPPPPP@email.com"
-    Now take some email (of length used to generate block 1) and replace
-    the last block to be block 2.  Now block 1 and block 2 will be adjacent
-    and will say XXXXuid=10&role=adminPPPPPPPPPPPPP
-'''
-
 def makeAdmin(cipher):
     # Shorthand
     encrypt = cipher.encrypt
@@ -59,19 +41,18 @@ def makeAdmin(cipher):
 
     prefixLen = ecbUtil.prefixLength(encrypt, blockSize)
     adminPad = blockSize - (prefixLen % blockSize)
-
     rolePad = adminPad + (blockSize - len('&uid=10&role='))
-    text = encrypt(b'x' * rolePad)
 
+    text = encrypt(b'x' * rolePad)
     roleBlock = cryptUtil.getNthBlock(text, blockSize, 1)
 
     text = encrypt(b'x' * adminPad + pkcs.pad(b'admin', blockSize))
     adminBlock = cryptUtil.getNthBlock(text, blockSize, 1)
 
     text = encrypt(b'x' * rolePad)
-    myText =  cryptUtil.getNthBlock(text, blockSize, 0) + roleBlock + adminBlock
+    myText = cryptUtil.getNthBlock(text, blockSize, 0) + roleBlock + adminBlock
     try:
-        return cipher.decrypt(myText)['role'] == 'admin':
+        return cipher.decrypt(myText)['role'] == 'admin'
     except:
         return False
 

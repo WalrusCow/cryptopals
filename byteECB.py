@@ -21,7 +21,7 @@ class SekritCipher:
 def findSecret(cipher):
     ''' Find the secret message hidden by encrypt. '''
     blockSize = cryptUtil.blockSize(cipher.encrypt)
-    if ecbUtil.method(cipher.encrypt, blockSize) != 'ECB':
+    if not ecbUtil.isECB(cipher.encrypt, blockSize):
         return
     prefixLength = ecbUtil.prefixLength(cipher.encrypt, blockSize)
     return ecbUtil.suffix(cipher.encrypt, blockSize, prefixLength)

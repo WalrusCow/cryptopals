@@ -2,12 +2,13 @@ import aes
 import pkcs
 from cryptUtil import blockIter, getNthBlock, blockSize
 
-def method(encrypt, blockSize):
-    ''' Determine if text was encrypted CBC or ECB. '''
+def isECB(encrypt, blockSize, prefixLength = 0):
+    ''' Determine if encryption uses ECB. '''
     text = encrypt(bytes(blockSize * 3))
-    b1 = getNthBlock(text, blockSize, 0)
-    b2 = getNthBlock(text, blockSize, 1)
-    return 'ECB' if b1 == b2 else 'CBC'
+    blockNum = prefixLength + (blockSize - prefixLength % blockSize)
+    b1 = getNthBlock(text, blockSize, blockNum)
+    b2 = getNthBlock(text, blockSize, blockNum)
+    return b1 == b2
 
 def prefixLength(encrypt, bs):
     ''' Find the length of a prefix prepended to input text. '''
